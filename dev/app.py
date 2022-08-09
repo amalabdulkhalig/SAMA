@@ -2,10 +2,12 @@
 
 from dash import dash, dcc, html
 import pandas as pd
+from datetime import datetime
 
 
-Data = pd.read_excel("data\CA_Consumer_Price_Index_CPI.xlsx")
+data = pd.read_csv('..\data\CPI_data.csv')
+data['Dates'] = pd.to_datetime(data['Dates'])
+daat = data.sort_values("Dates",inplace=True)
 
+app = dash(__name__)
 
-if __name__ == '__main__':
-    print(Data)
