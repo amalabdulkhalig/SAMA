@@ -10,6 +10,14 @@ on my youtube channel!
 
 import torch
 import torch.nn as nn
+import pandas as pd 
+import datetime
+from numpy import array
+import pandas as pd
+import numpy as np
+import csv
+import random
+
 
 
 class SelfAttention(nn.Module):
@@ -275,10 +283,79 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
 
-    x = torch.tensor([[1, 5, 6, 4, 3, 9, 5, 2, 0], [1, 8, 7, 3, 4, 5, 6, 7, 2]]).to(
-        device
-    )
-    trg = torch.tensor([[1, 7, 4, 3, 5, 9, 2, 0], [1, 5, 6, 2, 4, 7, 6, 2]]).to(device)
+    CPI_monthly = pd.read_csv('data/CPI_data.csv')
+    random.seed(1)
+    CPI_monthly['Dates'] = pd.to_datetime(CPI_monthly['Dates'])
+
+    # scale all the data between 0 and 1
+    scaler = MinMaxScaler()
+    scaled_CPI = asarray(CPI_monthly['CPIGR']).reshape(-1, 1)
+
+
+    data = [ele for ele in scaled_CPI[960:, 0].tolist()]
+    with open("data\last20data.csv", "w") as f:
+        wr = csv.writer(f, delimiter="\n")
+        wr.writerow(['Data'])
+        wr.writerow(data)
+
+    scaled_CPI = scaler.fit_transform(scaled_CPI)
+
+
+
+    p = 20
+    # print(scaled_CPI.shape)
+
+    # We omit the last 20 observations for our out of sample forecast
+    out_of_sample_forecast_input = scaled_CPI[960:, 0]
+
+    # Retain all the data minus the last 20 observatinos for forecasting
+    scaled_CPI = scaled_CPI[:960, 0]
+
+
+    # let's transform our remaning data into a univariate supervised learning problem
+
+    # Functions transforms our time series sequence into a supervised learning problem
+    def split_sequences(sequence, n_steps_in, n_steps_out):
+        X, y = list(), list()
+        for i in range(len(sequence) - (n_steps_in + n_steps_out)):
+            append_X = []
+            append_y = []
+            for j in range(n_steps_in):
+                append_X.append(sequence[i + j])
+            for k in range(n_steps_out):
+                append_y.append(sequence[i + n_steps_in + k + 1])
+
+            X.append(append_X)
+            y.append(append_y)
+
+        return np.array(X), np.array(y)
+
+
+    n_steps_in = 20
+    # we only consider as input lagged CPI for now, so n_features = 1
+    n_features = 1
+    n_steps_out = 12
+    # n_steps_in = number of lags we consider
+    # n-_steps_out = number of periods to forecast
+    X, y = split_sequences(scaled_CPI, n_steps_in=20, n_steps_out=12)
+
+    # Obtain 93 sequential data points for test (10%)
+    # we dropped the assumption that inflation was time invariant, so we want our data to train on the closest data to the ones put in the forecast. Thus the test data will be the first 10% of the data
+
+    X_train = X[0:835]
+    X_test = X[835:]
+    y_train = y[0:835]
+    y_test = y[835:]
+    X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], n_features)
+    y_train = y_train.reshape(y_train.shape[0], y_train.shape[1], n_features)
+
+
+
+
+    #x = torch.tensor([[1, 5, 6, 4, 3, 9, 5, 2, 0], [1, 8, 7, 3, 4, 5, 6, 7, 2]]).to(device)
+    #trg = torch.tensor([[1, 7, 4, 3, 5, 9, 2, 0], [1, 5, 6, 2, 4, 7, 6, 2]]).to(device)
+    x = torch.tensor(X_train).to(device)
+    trg = torch.tensor(y_train).to(device)
 
     src_pad_idx = 0
     trg_pad_idx = 0
