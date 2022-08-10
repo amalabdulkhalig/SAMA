@@ -10,7 +10,7 @@ from datetime import datetime
 
 data = pd.read_csv('..\data\CPI_data.csv')
 data['Dates'] = pd.to_datetime(data['Dates'])
-daat = data.sort_values("Dates",inplace=True)
+data = data.sort_values("Dates",inplace=True)
 
 app = Dash(__name__)
 
