@@ -7,7 +7,7 @@ on my youtube channel!
 
 
 """
-
+from sklearn.preprocessing import MinMaxScaler
 import torch
 import torch.nn as nn
 import pandas as pd 
@@ -17,7 +17,7 @@ import pandas as pd
 import numpy as np
 import csv
 import random
-
+from numpy import asarray
 
 
 class SelfAttention(nn.Module):
@@ -283,7 +283,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(device)
 
-    CPI_monthly = pd.read_csv('data/CPI_data.csv')
+    CPI_monthly = pd.read_csv('..\data\CPI_data.csv')
     random.seed(1)
     CPI_monthly['Dates'] = pd.to_datetime(CPI_monthly['Dates'])
 
@@ -293,7 +293,7 @@ if __name__ == "__main__":
 
 
     data = [ele for ele in scaled_CPI[960:, 0].tolist()]
-    with open("data\last20data.csv", "w") as f:
+    with open("..\data\last20data.csv", "w") as f:
         wr = csv.writer(f, delimiter="\n")
         wr.writerow(['Data'])
         wr.writerow(data)
