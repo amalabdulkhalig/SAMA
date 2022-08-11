@@ -1,11 +1,27 @@
-import datetime
-
-from dash import Dash, dcc, html
+import io
+import dash
+import time
 from dash.dependencies import Input, Output, State
+import dash_core_components as dcc
+import dash_html_components as html
+import base64
+import tensorflow as tf
+from matplotlib import image
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+from glob import glob
+import os
+import numpy as np
+from PIL import Image
+import tensorflow as tf
+from keras.preprocessing.image import ImageDataGenerator
+from tensorflow import keras
+from matplotlib import pyplot
+import time
 
-app = Dash(__name__, external_stylesheets=external_stylesheets)
+
+model = keras.models.load_model('model')
+
+app = dash.Dash(__name__)
 
 app.layout = html.Div([
     dcc.Upload(
@@ -30,27 +46,29 @@ app.layout = html.Div([
     html.Div(id='output-image-upload'),
 ])
 
-def parse_contents(contents, filename, date):
-    return html.Div([
-        html.H5(filename),
-        html.H6(datetime.datetime.fromtimestamp(date)),
+def load_and_preprocess(image):
+   image1 = Image.open(image)
+   rgb =  Image.new('RGB', image1.size)
+   rgb.paste(image1)
+   image = rgb
+   test_image = image.resize((32,32,3))
+   
+   return test_image
 
-        # HTML images accept base64 encoded strings in the same format
-        # that is supplied by the upload
-        html.Img(src=contents),
-        html.Hr(),  
-    ])
+def np_array_normalise(test_image):
+   np_image = np.array(test_image)
+   np_image = np_image/255
+   final_image = np.expand_dims(np_image, 0)
+   return final_image
 
 @app.callback(Output('output-image-upload', 'children'),
-              Input('upload-image', 'contents'),
-              State('upload-image', 'filename'),
-              State('upload-image', 'last_modified'))
-def update_output(list_of_contents, list_of_names, list_of_dates):
-    if list_of_contents is not None:
-        children = [
-            parse_contents(c, n, d) for c, n, d in
-            zip(list_of_contents, list_of_names, list_of_dates)]
-        return children
+              Input('upload-image', 'filename'))
+
+def prediction(image):
+    final_img = load_and_preprocess(image)
+    final_img = np_array_normalise(final_img)
+    Y = model.predict(final_img)
+    return Y
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,port=8051)
