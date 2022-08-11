@@ -1,24 +1,26 @@
-from sklearn.preprocessing import MinMaxScaler
-from numpy import asarray
-import pandas as pd
+import numpy as np
 
 
+def readucr(filename):
+    data = np.loadtxt(filename, delimiter="\t")
+    y = data[:, 0]
+    x = data[:, 1:]
+    return x, y.astype(int)
 
-data = pd.read_csv('..\data\CPI_data.csv')
-data['Dates'] = pd.to_datetime(data['Dates'])
-daat = data.sort_values("Dates",inplace=True)
 
-# scale all the data between 0 and 1 
-scaler = MinMaxScaler()
-scaled_CPI = asarray(data['CPIGR']).reshape(-1,1)
-scaled_CPI = scaler.fit_transform(scaled_CPI)
+root_url = "https://raw.githubusercontent.com/hfawaz/cd-diagram/master/FordA/"
 
-p = 20
-#print(scaled_CPI.shape)
+x_train, y_train = readucr(root_url + "FordA_TRAIN.tsv")
+x_test, y_test = readucr(root_url + "FordA_TEST.tsv")
 
-# We omit the last 20 observations for our out of sample forecast
-out_of_sample_forecast_input = scaled_CPI[960:,0]
+x_train = x_train.reshape((x_train.shape[0], x_train.shape[1], 1))
+x_test = x_test.reshape((x_test.shape[0], x_test.shape[1], 1))
 
-# Retain all the data minus the last 20 observatinos for forecasting
-scaled_CPI = scaled_CPI[:960,0]
-print(scaled_CPI)
+n_classes = len(np.unique(y_train))
+
+idx = np.random.permutation(len(x_train))
+x_train = x_train[idx]
+y_train = y_train[idx]
+
+y_train[y_train == -1] = 0
+y_test[y_test == -1] = 0

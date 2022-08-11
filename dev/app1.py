@@ -17,9 +17,8 @@ app = Dash(__name__)
 
 app.layout = html.Div(
     children =[
-        html.H1(children="CPI-data",
-        style = {'textAlign':'center','marginTop':40,'marginBottom':40, 'color':'green'}),
-        html.P(
+        html.H1(children="please upload un image here to detect it ",
+        style = {'textAlign':'center','marginTop':40,'marginBottom':40, 'color':'green'}),        html.P(
             children="Analyze the CPI rate over months and years in Saudi Arabia",
             style = {'textAlign':'center'}),
             dcc.Graph(
