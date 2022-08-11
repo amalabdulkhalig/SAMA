@@ -1,6 +1,8 @@
 import datetime
 
-from dash import Dash, dcc, html
+from dash import Dash
+import dash_core_components as dcc
+import dash_html_components as html
 from dash.dependencies import Input, Output, State
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -38,8 +40,7 @@ def parse_contents(contents, filename, date):
         # HTML images accept base64 encoded strings in the same format
         # that is supplied by the upload
         html.Img(src=contents),
-        html.Hr(),
-        
+        html.Hr(),  
     ])
 
 @app.callback(Output('output-image-upload', 'children'),
