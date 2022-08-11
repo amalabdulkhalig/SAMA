@@ -1,45 +1,24 @@
-import os
-import cv2
-import cvlib as cv
-from cvlib.object_detection import draw_bbox
-from IPython.display import Image, display
+from sklearn.preprocessing import MinMaxScaler
+from numpy import asarray
+import pandas as pd
 
-if __name__=="__main__":
 
-    dir_name = "images_with_boxes"
-    if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
 
-    def detect_and_draw_box(filename, model="yolov3-tiny", confidence=0.5):
-        """Detects common objects on an image and creates a new image with bounding boxes.
+data = pd.read_csv('..\data\CPI_data.csv')
+data['Dates'] = pd.to_datetime(data['Dates'])
+daat = data.sort_values("Dates",inplace=True)
 
-        Args:
-            filename (str): Filename of the image.
-            model (str): Either "yolov3" or "yolov3-tiny". Defaults to "yolov3-tiny".
-            confidence (float, optional): Desired confidence level. Defaults to 0.5.
-        """
-        
-        # Images are stored under the images/ directory
-        img_filepath = f'images/{filename}'
-        
-        # Read the image into a numpy array
-        img = cv2.imread(img_filepath)
-        
-        # Perform the object detection
-        bbox, label, conf = cv.detect_common_objects(img, confidence=confidence, model=model)
-        
-        # Print current image's filename
-        print(f"========================\nImage processed: {filename}\n")
-        
-        # Print detected objects with confidence level
-        for l, c in zip(label, conf):
-            print(f"Detected object: {l} with confidence level of {c}\n")
-        
-        # Create a new image that includes the bounding boxes
-        output_image = draw_bbox(img, bbox, label, conf)
-        
-        # Save the image in the directory images_with_boxes
-        cv2.imwrite(f'images_with_boxes/{filename}', output_image)
-        
-        # Display the image with bounding boxes
-        display(Image(f'images_with_boxes/{filename}'))
+# scale all the data between 0 and 1 
+scaler = MinMaxScaler()
+scaled_CPI = asarray(data['CPIGR']).reshape(-1,1)
+scaled_CPI = scaler.fit_transform(scaled_CPI)
+
+p = 20
+#print(scaled_CPI.shape)
+
+# We omit the last 20 observations for our out of sample forecast
+out_of_sample_forecast_input = scaled_CPI[960:,0]
+
+# Retain all the data minus the last 20 observatinos for forecasting
+scaled_CPI = scaled_CPI[:960,0]
+print(scaled_CPI)

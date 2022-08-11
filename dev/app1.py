@@ -8,9 +8,10 @@ import pandas as pd
 from datetime import datetime
 
 
+
 data = pd.read_csv('..\data\CPI_data.csv')
 data['Dates'] = pd.to_datetime(data['Dates'])
-data = data.sort_values("Dates",inplace=True)
+daat = data.sort_values("Dates",inplace=True)
 
 app = Dash(__name__)
 
