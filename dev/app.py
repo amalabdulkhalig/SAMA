@@ -6,7 +6,7 @@ from keras.models import load_model
 import numpy as np 
 import base64
 import cv2
-import image
+#import image
 from PIL import Image
 from io import BytesIO
 from skimage.transform import resize
@@ -20,9 +20,6 @@ classification = ['airplane','autombile','bird','cat','deer','dog','frog','horse
 
 app = Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-
-
-    
 
 app.layout = html.Div(
     [
@@ -55,7 +52,7 @@ app.layout = html.Div(
         multiple=True
         ),
     ),
-               width={"size": 6, "offset": 5},
+               width={"size": 5, "offset": 5},
             
         ),
 
@@ -86,11 +83,9 @@ def parse_contents(contents, filename):
           temp = list_index[i]
           list_index[i] = list_index[j]
           list_index[j] = temp
-    for i in range(5):
-        print(classification[list_index[i]],':',round(prediction[0][list_index[i]]*100,2),'%')
-        #show sorted predictions 
-    predition = 'This is '+str(round(prediction[0][list_index[0]]*100,2))+'%' +str(classification[list_index[0]])
-    print(classification,list_index)
+          
+    predition = 'This is '+str(round(prediction[0][list_index[0]]*100,2))+'% ' +str(classification[list_index[0]])
+    #print(classification,list_index)
 
     return html.Div([
         html.H5(predition),
