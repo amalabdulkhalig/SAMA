@@ -6,7 +6,6 @@ from keras.models import load_model
 import numpy as np 
 import base64
 import cv2
-#import image
 from PIL import Image
 from io import BytesIO
 from skimage.transform import resize
@@ -14,9 +13,8 @@ import dash_bootstrap_components as dbc
 
 
 #external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-external_stylesheets = ['dbc.themes.BOOTSTRAP']
 model = load_model('model')
-classification = ['airplane','autombile','bird','cat','deer','dog','frog','horse','ship','truck']
+classes = ['airplane','autombile','bird','cat','deer','dog','frog','horse','ship','truck']
 
 app = Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -84,8 +82,7 @@ def parse_contents(contents, filename):
           list_index[i] = list_index[j]
           list_index[j] = temp
           
-    predition = 'This is '+str(round(prediction[0][list_index[0]]*100,2))+'% ' +str(classification[list_index[0]])
-    #print(classification,list_index)
+    predition = 'This is '+str(round(prediction[0][list_index[0]]*100,2))+'% ' +str(classes[list_index[0]])
 
     return html.Div([
         html.H5(predition),

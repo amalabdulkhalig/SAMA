@@ -2,9 +2,11 @@
 # Author: Amal Abdulkhalig 
 
 This web app is built to detect objects in images using the deep learning model Convolutional Neural Network (CNN)
-TensorFlow.Keras was utilized to build the model
-the model was then saved into the (Model) folder and called from the web application  
+TensorFlow.Keras was utilized to build the model.
 the web application was built using the Dash framework 
+the classes the model can see are :
+classes = ['airplane','autombile','bird','cat','deer','dog','frog','horse','ship','truck']
+
 To run the code: 
 - go to the 'dev' directory 
 - in the terminal type python app.py 
