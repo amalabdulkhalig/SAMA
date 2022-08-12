@@ -10,28 +10,39 @@ import image
 from PIL import Image
 from io import BytesIO
 from skimage.transform import resize
+import dash_bootstrap_components as dbc
 
 
-
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+#external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['dbc.themes.BOOTSTRAP']
 new_model = load_model('model')
 classification = ['airplane','autombile','bird','cat','deer','dog','frog','horse','ship','truck']
 
-app = Dash(__name__,external_stylesheets=external_stylesheets)
+app = Dash(__name__,external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-app.layout = html.Div([
-    html.H1('Pleae upload an image to detect it',
-    style = {'textAlign':'center','marginTop':40,'marginBottom':40, 'color':'green'}
-        ),
-    html.P('I can only see the following classes: airplane, autombile, bird, cat, deer, dog, frog, horse, ship, truck',),
-    dcc.Upload(
+
+
+    
+
+app.layout = html.Div(
+    [
+ 
+    html.H1('Please upload an image to detect it',
+    style = {'textAlign':'center','marginTop':40,'marginBottom':40, 'color':'green'}),
+    html.P('I can only see the following classes: airplane, autombile, bird, cat, deer, dog, frog, horse, ship, truck',
+    style = {'textAlign':'center','marginTop':40,'marginBottom':40, 'color':'green'}),
+    
+    #--------------
+   
+          
+        dbc.Col(html.Div(dcc.Upload(
         id='upload-image',
+        
         children=html.Div([
-            'Drag and Drop or ',
             html.A('Select Files')
-        ]),
+        ],
         style={
-            "display": "inline-block",
+            'display': 'inline-block',
             'width': '50%',
             'height': '60px',
             'lineHeight': '60px',
@@ -39,12 +50,23 @@ app.layout = html.Div([
             'borderStyle': 'dashed',
             'borderRadius': '5px',
             'textAlign': 'center',
-            'alignment':'center'
+            'align':'center'
         },
+        
+        ),
         # Allow multiple files to be uploaded
         multiple=True
+        ),
     ),
-    html.Div(id='output-image-upload',),
+               width={"size": 6, "offset": 5},
+            
+        ),
+
+    #--------------
+    
+    
+    html.Div(id='output-image-upload',
+    style = {'textAlign':'center','marginTop':40,'marginBottom':40, 'color':'green'}),
 ])
 
 def parse_contents(contents, filename):
