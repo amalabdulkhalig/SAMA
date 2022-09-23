@@ -9,7 +9,7 @@ import cv2
 from PIL import Image
 from io import BytesIO
 from skimage.transform import resize
-import dash_bootstrap_components as dbc
+from dash import dash_bootstrap_components as dbc
 
 
 #external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -44,7 +44,6 @@ app.layout = html.Div(
             'textAlign': 'center',
             'align':'center'
         },
-        
         ),
         # Allow multiple files to be uploaded
         multiple=True
@@ -53,9 +52,7 @@ app.layout = html.Div(
                width={"size": 5, "offset": 5},
             
         ),
-
     #--------------
-    
     html.Div(id='output-image-upload',
     style = {'textAlign':'center','marginTop':40,'marginBottom':40, 'color':'green'}),
 ])
@@ -89,7 +86,7 @@ def parse_contents(contents, filename):
         # HTML images accept base64 encoded strings in the same format
         # that is supplied by the upload
         html.Img(src=contents),
-        html.Hr(),  
+        html.Hr(),
     ])
 
 @app.callback(Output('output-image-upload', 'children'),
