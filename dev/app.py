@@ -9,7 +9,7 @@ import cv2
 from PIL import Image
 from io import BytesIO
 from skimage.transform import resize
-from dash import dash_bootstrap_components as dbc
+import dash_bootstrap_components as dbc
 
 
 #external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
